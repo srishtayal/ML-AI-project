@@ -42,14 +42,30 @@ def create_window_features(df, window_size=360, stride=60):
 
             values = window[col].values
 
+            # feature_dict[f"{col}_mean"] = np.mean(values)
+            # feature_dict[f"{col}_std"] = np.std(values)
+            # feature_dict[f"{col}_min"] = np.min(values)
+            # feature_dict[f"{col}_max"] = np.max(values)
+            # feature_dict[f"{col}_last"] = values[-1]
+            # feature_dict[f"{col}_trend"] = values[-1] - values[0]
+
             feature_dict[f"{col}_mean"] = np.mean(values)
             feature_dict[f"{col}_std"] = np.std(values)
             feature_dict[f"{col}_min"] = np.min(values)
             feature_dict[f"{col}_max"] = np.max(values)
             feature_dict[f"{col}_last"] = values[-1]
-            feature_dict[f"{col}_trend"] = values[-1] - values[0]
 
-        feature_dict["target"] = window["target"].iloc[-1]
+            # ⭐ NEW FEATURES
+            feature_dict[f"{col}_range"] = np.max(values) - np.min(values)
+            feature_dict[f"{col}_trend"] = values[-1] - values[0]
+            feature_dict[f"{col}_abs_change"] = np.mean(np.abs(np.diff(values)))
+            feature_dict[f"{col}_variance"] = np.var(values)
+
+        # feature_dict["target"] = window["target"].iloc[-1]
+        if window["target"].sum() > 0:
+            feature_dict["target"] = 1
+        else:
+            feature_dict["target"] = 0
 
         feature_rows.append(feature_dict)
 
